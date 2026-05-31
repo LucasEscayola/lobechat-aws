@@ -7,17 +7,31 @@ lucasescayola-lobechat.duckdns.org {
 		}
 	}
 
-	# Reverse-proxy to LobeChat.
+	# Proxy /casdoor/* to Casdoor, stripping the prefix before forwarding so
+	# Casdoor sees its own path tree (e.g. /casdoor/login → /login).
+	handle_path /casdoor/* {
+		reverse_proxy localhost:47002 {
+			flush_interval -1
+
+			header_up Host              {host}
+			header_up X-Real-IP         {remote_host}
+			header_up X-Forwarded-For   {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Reverse-proxy everything else to LobeChat.
 	# - flush_interval -1: flush immediately — required for SSE streaming and
 	#   WebSocket frames (Caddy handles the Upgrade handshake automatically).
-	# - header_up directives: pass real client context to the app.
-	reverse_proxy localhost:47000 {
-		flush_interval -1
+	handle {
+		reverse_proxy localhost:47000 {
+			flush_interval -1
 
-		header_up Host              {host}
-		header_up X-Real-IP         {remote_host}
-		header_up X-Forwarded-For   {remote_host}
-		header_up X-Forwarded-Proto {scheme}
+			header_up Host              {host}
+			header_up X-Real-IP         {remote_host}
+			header_up X-Forwarded-For   {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
 	}
 
 	# Strip caching on all dynamic paths; leave Next.js static assets alone.
