@@ -20,6 +20,38 @@ lucasescayola-lobechat.duckdns.org {
 		}
 	}
 
+	# Casdoor's React build references /static/js/* and /static/css/* as
+	# absolute paths (no /casdoor prefix). Route them directly to Casdoor
+	# without stripping — Casdoor serves its own files at /static/*.
+	handle /static/* {
+		reverse_proxy localhost:47002 {
+			flush_interval -1
+
+			header_up Host              {host}
+			header_up X-Real-IP         {remote_host}
+			header_up X-Forwarded-For   {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Casdoor's frontend JS uses window.location.origin for API calls, so
+	# /api/* requests from the login page arrive without the /casdoor prefix.
+	# Route them to Casdoor when the Referer shows they came from /casdoor/*.
+	@casdoor_api {
+		path      /api/*
+		header    Referer */casdoor/*
+	}
+	handle @casdoor_api {
+		reverse_proxy localhost:47002 {
+			flush_interval -1
+
+			header_up Host              {host}
+			header_up X-Real-IP         {remote_host}
+			header_up X-Forwarded-For   {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
 	# Reverse-proxy everything else to LobeChat.
 	# - flush_interval -1: flush immediately — required for SSE streaming and
 	#   WebSocket frames (Caddy handles the Upgrade handshake automatically).
