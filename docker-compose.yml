@@ -22,9 +22,6 @@ services:
     container_name: lobe-chat
     ports:
       - "${LOBECHAT_PORT:-47000}:3210"
-    volumes:
-      # HOTFIX: Patch MCP callTool to add session retry logic
-      - ./patches/route.js:/app/.next/server/app/(backend)/trpc/tools/[trpc]/route.js:ro
     extra_hosts:
       # Resolve the public domain to the Docker host so the container can reach
       # Caddy (and thus Casdoor's OIDC discovery endpoint) without hairpin NAT.
