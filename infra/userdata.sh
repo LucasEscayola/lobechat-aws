@@ -90,7 +90,7 @@ FEATURE_FLAGS=-changelog,-check_updates
 # ── Casdoor SSO ───────────────────────────────────────────────────────────
 AUTH_CASDOOR_ID=${AUTH_CASDOOR_ID}
 AUTH_CASDOOR_SECRET=${AUTH_CASDOOR_SECRET}
-AUTH_CASDOOR_ISSUER=http://casdoor:8000
+AUTH_CASDOOR_ISSUER=https://${DOMAIN}/casdoor
 
 # ── PostgreSQL ────────────────────────────────────────────────────────────
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

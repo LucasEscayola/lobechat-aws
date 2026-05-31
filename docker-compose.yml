@@ -25,18 +25,25 @@ services:
     volumes:
       # HOTFIX: Patch MCP callTool to add session retry logic
       - ./patches/route.js:/app/.next/server/app/(backend)/trpc/tools/[trpc]/route.js:ro
+    extra_hosts:
+      # Resolve the public domain to the Docker host so the container can reach
+      # Caddy (and thus Casdoor's OIDC discovery endpoint) without hairpin NAT.
+      - "${HOST_DOMAIN:-localhost}:host-gateway"
     environment:
       # App configuration
-      - APP_URL=http://${HOST_DOMAIN:-localhost}:${LOBECHAT_PORT:-47000}
+      - APP_URL=${APP_URL:-http://localhost:47000}
       # Database configuration
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/lobechat
       # NextAuth SSO configuration
       - NEXT_AUTH_SSO_PROVIDERS=casdoor
       - NEXT_AUTH_SECRET=${NEXT_AUTH_SECRET}
-      - NEXTAUTH_URL=http://${HOST_DOMAIN:-localhost}:${LOBECHAT_PORT:-47000}
-      - AUTH_URL=http://${HOST_DOMAIN:-localhost}:${LOBECHAT_PORT:-47000}
-      # Casdoor configuration
-      - AUTH_CASDOOR_ISSUER=http://${HOST_DOMAIN:-localhost}:${CASDOOR_PORT:-47002}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:47000}
+      - AUTH_URL=${NEXTAUTH_URL:-http://localhost:47000}
+      # Casdoor configuration — AUTH_CASDOOR_ISSUER must be the public HTTPS URL
+      # because the OIDC discovery doc's issuer field must match it exactly.
+      # extra_hosts above routes that domain to the local Caddy without going
+      # through the public internet.
+      - AUTH_CASDOOR_ISSUER=${AUTH_CASDOOR_ISSUER:-http://casdoor:8000}
       - AUTH_CASDOOR_ID=${AUTH_CASDOOR_ID}
       - AUTH_CASDOOR_SECRET=${AUTH_CASDOOR_SECRET}
       # Trust custom hostname for NextAuth
