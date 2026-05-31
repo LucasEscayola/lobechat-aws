@@ -1,0 +1,31 @@
+lucasescayola-lobechat.duckdns.org {
+	# Force HTTP-01 challenge (port 80 must be reachable from the internet).
+	# Caddy will obtain and auto-renew the Let's Encrypt certificate.
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+
+	# Reverse-proxy to LobeChat.
+	# - flush_interval -1: flush immediately — required for SSE streaming and
+	#   WebSocket frames (Caddy handles the Upgrade handshake automatically).
+	# - header_up directives: pass real client context to the app.
+	reverse_proxy localhost:47000 {
+		flush_interval -1
+
+		header_up Host              {host}
+		header_up X-Real-IP         {remote_host}
+		header_up X-Forwarded-For   {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	# Strip caching on all dynamic paths; leave Next.js static assets alone.
+	@static path /_next/static/* /favicon.ico /robots.txt
+	@dynamic not path /_next/static/* /favicon.ico /robots.txt
+
+	header @dynamic {
+		Cache-Control "no-store, no-cache, must-revalidate"
+		-Pragma
+	}
+}
