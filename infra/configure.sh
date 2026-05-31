@@ -34,7 +34,11 @@ set_env() {
 # 1. Update .env
 # ---------------------------------------------------------------------------
 echo "[1/5] Updating ${ENV_FILE}..."
-set_env AUTH_CASDOOR_ISSUER  "https://${DOMAIN}/casdoor"
+# Casdoor is served directly on port 47002 (not behind the Caddy subpath).
+# The issuer must be the URL the browser AND the LobeChat container can both
+# reach — port 47002 is open in the security group and reachable via the
+# Docker bridge (extra_hosts in compose resolves the domain to 172.17.0.1).
+set_env AUTH_CASDOOR_ISSUER  "http://${DOMAIN}:47002"
 set_env AUTH_CASDOOR_ID      "${CASDOOR_CLIENT_ID}"
 set_env AUTH_CASDOOR_SECRET  "${CASDOOR_CLIENT_SECRET}"
 set_env AUTH_TRUST_HOST      "true"
@@ -45,12 +49,11 @@ echo "      Done."
 # ---------------------------------------------------------------------------
 # 2. Update origin in casdoor-app.conf
 # ---------------------------------------------------------------------------
-echo "[2/5] Updating origin/originFrontend in ${CASDOOR_CONF}..."
-sed -i "s|^origin = .*|origin = https://${DOMAIN}/casdoor|" "$CASDOOR_CONF"
-# originFrontend drives the authorization_endpoint in OIDC discovery; it must
-# also carry the /casdoor prefix so the browser OAuth redirect lands on the
-# correct Caddy route.
-sed -i "s|^originFrontend = .*|originFrontend = https://${DOMAIN}/casdoor|" "$CASDOOR_CONF"
+echo "[2/5] Updating origin in ${CASDOOR_CONF}..."
+# origin must match AUTH_CASDOOR_ISSUER so OIDC token validation passes.
+sed -i "s|^origin = .*|origin = http://${DOMAIN}:47002|" "$CASDOOR_CONF"
+# Clear originFrontend so Casdoor derives the login-page URL from origin.
+sed -i "s|^originFrontend = .*|originFrontend = |" "$CASDOOR_CONF"
 echo "      Done."
 
 # ---------------------------------------------------------------------------
