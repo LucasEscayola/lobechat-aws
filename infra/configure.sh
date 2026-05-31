@@ -45,8 +45,12 @@ echo "      Done."
 # ---------------------------------------------------------------------------
 # 2. Update origin in casdoor-app.conf
 # ---------------------------------------------------------------------------
-echo "[2/5] Updating origin in ${CASDOOR_CONF}..."
+echo "[2/5] Updating origin/originFrontend in ${CASDOOR_CONF}..."
 sed -i "s|^origin = .*|origin = https://${DOMAIN}/casdoor|" "$CASDOOR_CONF"
+# originFrontend drives the authorization_endpoint in OIDC discovery; it must
+# also carry the /casdoor prefix so the browser OAuth redirect lands on the
+# correct Caddy route.
+sed -i "s|^originFrontend = .*|originFrontend = https://${DOMAIN}/casdoor|" "$CASDOOR_CONF"
 echo "      Done."
 
 # ---------------------------------------------------------------------------
