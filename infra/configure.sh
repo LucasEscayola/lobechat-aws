@@ -58,19 +58,20 @@ systemctl reload caddy
 echo "      Done."
 
 # ---------------------------------------------------------------------------
-# 4. Restart Casdoor and wait for it to reimport init_data.json
+# 4. Recreate Casdoor so it picks up new config, then wait for reimport
+#    NOTE: "restart" replays the old container spec; "up --force-recreate"
+#    re-reads docker-compose.yml + .env and applies any changes.
 # ---------------------------------------------------------------------------
-echo "[4/5] Restarting Casdoor (allows init_data.json reimport)..."
+echo "[4/5] Recreating Casdoor (picks up new config + reimports init_data.json)..."
 cd "$INSTALL_DIR"
-docker compose restart casdoor
+docker compose up -d --force-recreate --no-deps casdoor
 echo "      Waiting 15 s for Casdoor to fully start and reimport init data..."
 sleep 15
 
 # ---------------------------------------------------------------------------
-# 5. Patch DB values that init_data.json reimport may not cover, then restart
-#    LobeChat so it picks up the new .env.
+# 5. Patch DB post-reimport, then recreate LobeChat with the new .env.
 # ---------------------------------------------------------------------------
-echo "[5/5] Patching Casdoor DB and restarting LobeChat..."
+echo "[5/5] Patching Casdoor DB and recreating LobeChat..."
 PG_PASS=$(grep '^POSTGRES_PASSWORD=' "$ENV_FILE" | cut -d= -f2-)
 
 docker exec -e PGPASSWORD="$PG_PASS" shared-postgres \
@@ -80,7 +81,7 @@ docker exec -e PGPASSWORD="$PG_PASS" shared-postgres \
          homepage_url  = 'https://${DOMAIN}'
      WHERE name = 'lobechat';"
 
-docker compose restart lobe-chat
+docker compose up -d --force-recreate --no-deps lobe-chat
 echo "      Waiting 5 s for LobeChat to come up..."
 sleep 5
 
