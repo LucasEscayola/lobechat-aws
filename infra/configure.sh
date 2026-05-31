@@ -49,12 +49,6 @@ docker exec -e PGPASSWORD="$PG_PASS" shared-postgres \
          homepage_url  = 'https://${DOMAIN}'
      WHERE name = 'lobechat';"
 
-docker exec -e PGPASSWORD="$PG_PASS" shared-postgres \
-    psql -U postgres -d casdoor -c \
-    "UPDATE application
-     SET origin = 'https://${DOMAIN}/casdoor'
-     WHERE name = 'lobechat';"
-
 echo "      Done."
 
 # ---------------------------------------------------------------------------
