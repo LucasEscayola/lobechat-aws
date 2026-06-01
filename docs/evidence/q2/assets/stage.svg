@@ -1,0 +1,149 @@
+<svg width="1200" height="820" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#555"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#E07000"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#2C6FAD"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="820" fill="#F8F9FA"/>
+
+  <!-- Title -->
+  <text x="600" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">Stage Environment — Dedicated Qdrant EC2 + Basic Monitoring</text>
+
+  <!-- DuckDNS top center -->
+  <rect x="440" y="50" width="320" height="44" rx="8" fill="#999" stroke="#666" stroke-width="2"/>
+  <text x="600" y="69" text-anchor="middle" font-size="13" font-weight="bold" fill="white">DuckDNS (Free DNS)</text>
+  <text x="600" y="85" text-anchor="middle" font-size="11" fill="#EEE">lucasescayola-lobechat.duckdns.org → EC2 Elastic IP</text>
+
+  <!-- arrow DuckDNS → Main EC2 -->
+  <line x1="520" y1="94" x2="360" y2="150" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- ===== MAIN EC2 ===== -->
+  <rect x="30" y="150" width="600" height="530" rx="12" fill="#DDEEFF" stroke="#4A90D9" stroke-width="3"/>
+  <text x="330" y="175" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5080">Main EC2 t3.large · eu-west-1a · 60 GB gp3 · Ubuntu 24.04</text>
+
+  <!-- Caddy -->
+  <rect x="130" y="188" width="400" height="42" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="2"/>
+  <text x="330" y="206" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Caddy (Reverse Proxy + TLS)</text>
+  <text x="330" y="221" text-anchor="middle" font-size="11" fill="#D0E8FF">:80 ACME · :443 HTTPS · Let's Encrypt (auto-renew)</text>
+
+  <!-- LobeChat -->
+  <rect x="50" y="252" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="170" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="white">LobeChat</text>
+  <text x="170" y="288" text-anchor="middle" font-size="11" fill="#D0E8FF">lobehub/lobe-chat-database</text>
+  <text x="170" y="303" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47000</text>
+
+  <!-- Casdoor -->
+  <rect x="370" y="252" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="490" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Casdoor SSO</text>
+  <text x="490" y="288" text-anchor="middle" font-size="11" fill="#D0E8FF">casbin/casdoor:v2.13.0</text>
+  <text x="490" y="303" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47002</text>
+
+  <!-- PostgreSQL -->
+  <rect x="50" y="332" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="170" y="352" text-anchor="middle" font-size="13" font-weight="bold" fill="white">PostgreSQL</text>
+  <text x="170" y="368" text-anchor="middle" font-size="11" fill="#D0E8FF">pgvector/pgvector:pg16</text>
+  <text x="170" y="383" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47003 · local EBS</text>
+
+  <!-- MinIO -->
+  <rect x="370" y="332" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="490" y="352" text-anchor="middle" font-size="13" font-weight="bold" fill="white">MinIO (S3)</text>
+  <text x="490" y="368" text-anchor="middle" font-size="11" fill="#D0E8FF">minio/minio:latest</text>
+  <text x="490" y="383" text-anchor="middle" font-size="11" fill="#A8D4FF">:47005 API · :47006 Console</text>
+
+  <!-- MCPHub -->
+  <rect x="50" y="412" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="170" y="432" text-anchor="middle" font-size="13" font-weight="bold" fill="white">MCPHub</text>
+  <text x="170" y="448" text-anchor="middle" font-size="11" fill="#D0E8FF">11 MCP servers</text>
+  <text x="170" y="463" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47008</text>
+
+  <!-- Hayhooks -->
+  <rect x="370" y="412" width="240" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="490" y="432" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Hayhooks + MCP</text>
+  <text x="490" y="448" text-anchor="middle" font-size="11" fill="#D0E8FF">deepset/hayhooks:v1.1.0</text>
+  <text x="490" y="463" text-anchor="middle" font-size="11" fill="#A8D4FF">:47012 · :47013</text>
+
+  <!-- Data note -->
+  <rect x="50" y="492" width="560" height="44" rx="6" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="330" y="511" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a5080">./data/ — postgres/ · minio/ (local EBS bind mounts)</text>
+  <text x="330" y="527" text-anchor="middle" font-size="11" fill="#555">No automated backup for app data. Manual snapshots only.</text>
+
+  <!-- Linux Sandbox -->
+  <rect x="50" y="556" width="240" height="50" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="170" y="576" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Linux Sandbox</text>
+  <text x="170" y="592" text-anchor="middle" font-size="11" fill="#A8D4FF">Ubuntu 24.04 · port via Docker</text>
+
+  <!-- CloudWatch Agent note -->
+  <rect x="370" y="556" width="240" height="50" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="490" y="576" text-anchor="middle" font-size="12" font-weight="bold" fill="white">CloudWatch Agent</text>
+  <text x="490" y="592" text-anchor="middle" font-size="11" fill="#D0E8FF">CPU · memory · disk metrics</text>
+
+  <!-- ===== QDRANT EC2 ===== -->
+  <rect x="700" y="150" width="340" height="260" rx="12" fill="#DDEEFF" stroke="#4A90D9" stroke-width="3"/>
+  <text x="870" y="175" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5080">Qdrant EC2 t3.large</text>
+  <text x="870" y="192" text-anchor="middle" font-size="11" fill="#2C6FAD">eu-west-1a · 60 GB gp3 EBS</text>
+
+  <!-- Qdrant service -->
+  <rect x="730" y="208" width="280" height="80" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="2"/>
+  <text x="870" y="232" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Qdrant</text>
+  <text x="870" y="250" text-anchor="middle" font-size="11" fill="#D0E8FF">qdrant/qdrant:latest</text>
+  <text x="870" y="266" text-anchor="middle" font-size="11" fill="#A8D4FF">:47010 REST · :47011 gRPC</text>
+  <text x="870" y="282" text-anchor="middle" font-size="11" fill="#A8D4FF">rag-demo collection</text>
+
+  <!-- EBS label -->
+  <rect x="730" y="306" width="280" height="42" rx="6" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="870" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a5080">gp3 EBS Volume</text>
+  <text x="870" y="340" text-anchor="middle" font-size="11" fill="#444">Qdrant storage/ bind mount</text>
+
+  <!-- EBS snapshot arrow → S3 -->
+  <line x1="870" y1="348" x2="870" y2="450" stroke="#E07000" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-orange)"/>
+  <text x="882" y="400" font-size="11" fill="#E07000" font-weight="bold">Daily EBS</text>
+  <text x="882" y="414" font-size="11" fill="#E07000">Snapshot</text>
+
+  <!-- S3 Backup -->
+  <rect x="730" y="450" width="280" height="52" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="870" y="472" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Amazon S3</text>
+  <text x="870" y="488" text-anchor="middle" font-size="11" fill="white">EBS Snapshot Storage</text>
+  <text x="870" y="501" text-anchor="middle" font-size="10" fill="#FFF3CC">Managed AWS · eu-west-1</text>
+
+  <!-- CloudWatch -->
+  <rect x="730" y="524" width="280" height="80" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="870" y="546" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Amazon CloudWatch</text>
+  <text x="870" y="562" text-anchor="middle" font-size="11" fill="white">Basic monitoring</text>
+  <text x="870" y="578" text-anchor="middle" font-size="11" fill="white">EC2 metrics (CPU, network, disk)</text>
+  <text x="870" y="594" text-anchor="middle" font-size="10" fill="#FFF3CC">No custom alarms in stage</text>
+
+  <!-- Arrow: Main EC2 → Qdrant EC2 -->
+  <line x1="630" y1="340" x2="698" y2="300" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="648" y="322" font-size="10" fill="#2C6FAD">:47010</text>
+
+  <!-- CloudWatch agent → CloudWatch service -->
+  <line x1="610" y1="580" x2="728" y2="570" stroke="#E07000" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-orange)"/>
+  <text x="650" y="565" font-size="10" fill="#E07000">metrics</text>
+
+  <!-- Legend -->
+  <rect x="30" y="700" width="1140" height="100" rx="8" fill="white" stroke="#CCC" stroke-width="1"/>
+  <text x="55" y="722" font-size="12" font-weight="bold" fill="#333">Legend</text>
+  <rect x="110" y="710" width="16" height="16" rx="3" fill="#4A90D9"/>
+  <text x="132" y="723" font-size="12" fill="#333">EC2 / Docker services</text>
+  <rect x="300" y="710" width="16" height="16" rx="3" fill="#FF9500"/>
+  <text x="322" y="723" font-size="12" fill="#333">Managed AWS services</text>
+  <rect x="500" y="710" width="16" height="16" rx="3" fill="#999"/>
+  <text x="522" y="723" font-size="12" fill="#333">External / DNS</text>
+  <line x1="660" y1="718" x2="700" y2="718" stroke="#E07000" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-orange)"/>
+  <text x="706" y="723" font-size="12" fill="#333">Backup / metrics flow</text>
+  <line x1="860" y1="718" x2="900" y2="718" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="906" y="723" font-size="12" fill="#333">Service call</text>
+
+  <text x="55" y="744" font-size="11" fill="#555">• Qdrant isolated on its own EC2: prevents vector workloads from starving app services. Daily EBS snapshots → S3 for recovery.</text>
+  <text x="55" y="760" font-size="11" fill="#555">• Remaining services (LobeChat, Casdoor, Postgres, MinIO, MCPHub, Hayhooks) share the main t3.large instance.</text>
+  <text x="55" y="776" font-size="11" fill="#555">• CloudWatch Basic monitors both EC2s. No custom alarms or auto-scaling. Still a single point of failure for app tier.</text>
+  <text x="55" y="792" font-size="11" fill="#CC6600">• Not yet production-ready: no Multi-AZ DB, no HA, no load balancer. Stage ≈ prod parity for data but not for availability.</text>
+</svg>

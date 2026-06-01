@@ -1,0 +1,110 @@
+<svg width="920" height="700" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="700" fill="#F8F9FA"/>
+
+  <!-- Title -->
+  <text x="460" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">Dev Environment — Single EC2 (all-in-one)</text>
+
+  <!-- Internet -->
+  <rect x="360" y="50" width="200" height="44" rx="8" fill="#999" stroke="#666" stroke-width="2"/>
+  <text x="460" y="68" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Internet</text>
+  <text x="460" y="85" text-anchor="middle" font-size="11" fill="#EEE">User Browser (HTTPS :443)</text>
+
+  <!-- arrow internet → duckdns -->
+  <line x1="460" y1="94" x2="460" y2="122" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- DuckDNS -->
+  <rect x="320" y="122" width="280" height="44" rx="8" fill="#999" stroke="#666" stroke-width="2"/>
+  <text x="460" y="141" text-anchor="middle" font-size="13" font-weight="bold" fill="white">DuckDNS (Free DNS)</text>
+  <text x="460" y="157" text-anchor="middle" font-size="11" fill="#EEE">lucasescayola-lobechat.duckdns.org → 18.202.89.106</text>
+
+  <!-- arrow duckdns → EC2 -->
+  <line x1="460" y1="166" x2="460" y2="194" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- EC2 outer box -->
+  <rect x="30" y="194" width="860" height="460" rx="12" fill="#DDEEFF" stroke="#4A90D9" stroke-width="3"/>
+  <text x="460" y="218" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5080">EC2 t3.medium · eu-west-1a · 60 GB gp3 EBS · Ubuntu 24.04</text>
+
+  <!-- Caddy -->
+  <rect x="310" y="228" width="300" height="42" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="2"/>
+  <text x="460" y="246" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Caddy (Reverse Proxy + TLS)</text>
+  <text x="460" y="261" text-anchor="middle" font-size="11" fill="#D0E8FF">:80 HTTP-01 ACME · :443 HTTPS · Let's Encrypt cert</text>
+
+  <!-- Row 1 -->
+  <!-- LobeChat -->
+  <rect x="50" y="292" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="172" y="313" text-anchor="middle" font-size="13" font-weight="bold" fill="white">LobeChat</text>
+  <text x="172" y="329" text-anchor="middle" font-size="11" fill="#D0E8FF">lobehub/lobe-chat-database</text>
+  <text x="172" y="344" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47000</text>
+
+  <!-- Casdoor -->
+  <rect x="337" y="292" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="460" y="313" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Casdoor SSO</text>
+  <text x="460" y="329" text-anchor="middle" font-size="11" fill="#D0E8FF">casbin/casdoor:v2.13.0</text>
+  <text x="460" y="344" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47002 (OAuth/OIDC)</text>
+
+  <!-- PostgreSQL -->
+  <rect x="624" y="292" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="747" y="313" text-anchor="middle" font-size="13" font-weight="bold" fill="white">PostgreSQL</text>
+  <text x="747" y="329" text-anchor="middle" font-size="11" fill="#D0E8FF">pgvector/pgvector:pg16</text>
+  <text x="747" y="344" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47003 · shared DB</text>
+
+  <!-- Row 2 -->
+  <!-- MinIO -->
+  <rect x="50" y="372" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="172" y="393" text-anchor="middle" font-size="13" font-weight="bold" fill="white">MinIO (S3-compatible)</text>
+  <text x="172" y="409" text-anchor="middle" font-size="11" fill="#D0E8FF">minio/minio:latest</text>
+  <text x="172" y="424" text-anchor="middle" font-size="11" fill="#A8D4FF">:47005 API · :47006 Console</text>
+
+  <!-- Qdrant -->
+  <rect x="337" y="372" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="460" y="393" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Qdrant</text>
+  <text x="460" y="409" text-anchor="middle" font-size="11" fill="#D0E8FF">qdrant/qdrant:latest</text>
+  <text x="460" y="424" text-anchor="middle" font-size="11" fill="#A8D4FF">:47010 REST · :47011 gRPC</text>
+
+  <!-- MCPHub -->
+  <rect x="624" y="372" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="747" y="393" text-anchor="middle" font-size="13" font-weight="bold" fill="white">MCPHub</text>
+  <text x="747" y="409" text-anchor="middle" font-size="11" fill="#D0E8FF">11 MCP servers (stdio/http)</text>
+  <text x="747" y="424" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47008</text>
+
+  <!-- Row 3 -->
+  <!-- Hayhooks -->
+  <rect x="50" y="452" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="172" y="473" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Hayhooks + MCP</text>
+  <text x="172" y="489" text-anchor="middle" font-size="11" fill="#D0E8FF">deepset/hayhooks:v1.1.0</text>
+  <text x="172" y="504" text-anchor="middle" font-size="11" fill="#A8D4FF">:47012 REST · :47013 MCP</text>
+
+  <!-- Linux Sandbox -->
+  <rect x="337" y="452" width="245" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="460" y="473" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Linux Sandbox</text>
+  <text x="460" y="489" text-anchor="middle" font-size="11" fill="#D0E8FF">Ubuntu 24.04 (user: oriol)</text>
+  <text x="460" y="504" text-anchor="middle" font-size="11" fill="#A8D4FF">exec via Docker socket</text>
+
+  <!-- Data persistence box -->
+  <rect x="624" y="452" width="245" height="58" rx="6" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="747" y="472" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a5080">./data/ (bind mounts)</text>
+  <text x="747" y="488" text-anchor="middle" font-size="11" fill="#444">postgres/ · minio/ · qdrant/</text>
+  <text x="747" y="504" text-anchor="middle" font-size="11" fill="#CC2200">⚠ No backup — single EBS</text>
+
+  <!-- Legend -->
+  <rect x="50" y="530" width="820" height="106" rx="8" fill="white" stroke="#CCC" stroke-width="1"/>
+  <text x="70" y="552" font-size="12" font-weight="bold" fill="#333">Legend</text>
+  <rect x="120" y="540" width="16" height="16" rx="3" fill="#4A90D9"/>
+  <text x="142" y="553" font-size="12" fill="#333">EC2 Instance / Docker services</text>
+  <rect x="330" y="540" width="16" height="16" rx="3" fill="#999"/>
+  <text x="352" y="553" font-size="12" fill="#333">External / DNS</text>
+  <rect x="470" y="540" width="16" height="16" rx="3" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="492" y="553" font-size="12" fill="#333">Data persistence</text>
+  <line x1="120" y1="568" x2="860" y2="568" stroke="#EEE" stroke-width="1"/>
+  <text x="70" y="584" font-size="11" fill="#555">• All 9 services run on a single instance. No horizontal scaling, no HA, no multi-AZ.</text>
+  <text x="70" y="600" font-size="11" fill="#555">• Data persisted via bind mounts to host EBS. Instance stop is safe; instance termination loses all data.</text>
+  <text x="70" y="616" font-size="11" fill="#555">• Caddy handles TLS termination and HTTP→HTTPS redirect. Casdoor exposed directly on :47002 for OAuth browser redirects.</text>
+  <text x="70" y="630" font-size="11" fill="#CC2200">• Single point of failure. Not suitable for production workloads.</text>
+</svg>

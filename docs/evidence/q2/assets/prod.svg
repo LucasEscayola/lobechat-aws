@@ -1,0 +1,228 @@
+<svg width="1400" height="980" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#555"/>
+    </marker>
+    <marker id="arr-o" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#CC7000"/>
+    </marker>
+    <marker id="arr-b" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#2C6FAD"/>
+    </marker>
+    <marker id="arr-g" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#777"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="980" fill="#F8F9FA"/>
+
+  <!-- Title -->
+  <text x="700" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">Prod Environment — Managed AWS Services + HA Qdrant</text>
+
+  <!-- ===== TOP ROW: User → Route53 → ALB ===== -->
+
+  <!-- User -->
+  <rect x="30" y="55" width="140" height="44" rx="8" fill="#999" stroke="#666" stroke-width="2"/>
+  <text x="100" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Internet</text>
+  <text x="100" y="89" text-anchor="middle" font-size="11" fill="#EEE">User Browser</text>
+
+  <!-- arrow User → Route53 -->
+  <line x1="170" y1="77" x2="228" y2="77" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Route53 -->
+  <rect x="228" y="55" width="180" height="44" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="318" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Route 53</text>
+  <text x="318" y="89" text-anchor="middle" font-size="11" fill="white">Hosted Zone · A record</text>
+
+  <!-- arrow Route53 → ACM (below) -->
+  <!-- arrow Route53 → ALB -->
+  <line x1="408" y1="77" x2="490" y2="77" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- ACM -->
+  <rect x="228" y="120" width="180" height="44" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="318" y="139" text-anchor="middle" font-size="13" font-weight="bold" fill="white">ACM</text>
+  <text x="318" y="155" text-anchor="middle" font-size="11" fill="white">TLS cert (auto-renew)</text>
+
+  <!-- ACM → ALB dotted -->
+  <line x1="408" y1="142" x2="490" y2="100" stroke="#CC7000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-o)"/>
+
+  <!-- ALB -->
+  <rect x="490" y="55" width="260" height="80" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="620" y="80" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Application Load Balancer</text>
+  <text x="620" y="97" text-anchor="middle" font-size="11" fill="white">:443 HTTPS · ACM cert · eu-west-1</text>
+  <text x="620" y="113" text-anchor="middle" font-size="11" fill="#FFF3CC">Target group → App EC2 :47000</text>
+
+  <!-- Secrets Manager (top right) -->
+  <rect x="1100" y="55" width="270" height="60" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="1235" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="white">AWS Secrets Manager</text>
+  <text x="1235" y="95" text-anchor="middle" font-size="11" fill="white">All secrets (API keys, DB pass, etc.)</text>
+  <text x="1235" y="108" text-anchor="middle" font-size="10" fill="#FFF3CC">EC2 reads at boot via IAM role</text>
+
+  <!-- ===== APP EC2 ===== -->
+  <rect x="30" y="180" width="640" height="440" rx="12" fill="#DDEEFF" stroke="#4A90D9" stroke-width="3"/>
+  <text x="350" y="204" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5080">App EC2 t3.xlarge · eu-west-1a · 60 GB gp3 · Ubuntu 24.04</text>
+
+  <!-- ALB → App EC2 arrow -->
+  <line x1="620" y1="135" x2="400" y2="185" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Caddy (inside app EC2 — acts as local proxy only) -->
+  <rect x="155" y="215" width="390" height="40" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="2"/>
+  <text x="350" y="231" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Caddy (local reverse proxy — no TLS, ALB handles it)</text>
+  <text x="350" y="246" text-anchor="middle" font-size="11" fill="#D0E8FF">Routes internal traffic · :47000</text>
+
+  <!-- LobeChat -->
+  <rect x="50" y="275" width="255" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="178" y="296" text-anchor="middle" font-size="13" font-weight="bold" fill="white">LobeChat</text>
+  <text x="178" y="312" text-anchor="middle" font-size="11" fill="#D0E8FF">lobehub/lobe-chat-database</text>
+  <text x="178" y="327" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47000</text>
+
+  <!-- Casdoor -->
+  <rect x="345" y="275" width="305" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="498" y="296" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Casdoor SSO</text>
+  <text x="498" y="312" text-anchor="middle" font-size="11" fill="#D0E8FF">casbin/casdoor:v2.13.0</text>
+  <text x="498" y="327" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47002 · OAuth/OIDC</text>
+
+  <!-- MCPHub -->
+  <rect x="50" y="353" width="255" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="178" y="374" text-anchor="middle" font-size="13" font-weight="bold" fill="white">MCPHub</text>
+  <text x="178" y="390" text-anchor="middle" font-size="11" fill="#D0E8FF">11 MCP servers (stdio/http)</text>
+  <text x="178" y="405" text-anchor="middle" font-size="11" fill="#A8D4FF">port 47008</text>
+
+  <!-- Hayhooks -->
+  <rect x="345" y="353" width="305" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="498" y="374" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Hayhooks + MCP</text>
+  <text x="498" y="390" text-anchor="middle" font-size="11" fill="#D0E8FF">deepset/hayhooks:v1.1.0</text>
+  <text x="498" y="405" text-anchor="middle" font-size="11" fill="#A8D4FF">:47012 REST · :47013 MCP</text>
+
+  <!-- Linux Sandbox -->
+  <rect x="50" y="431" width="255" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5"/>
+  <text x="178" y="452" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Linux Sandbox</text>
+  <text x="178" y="468" text-anchor="middle" font-size="11" fill="#D0E8FF">Ubuntu 24.04 container</text>
+  <text x="178" y="483" text-anchor="middle" font-size="11" fill="#A8D4FF">exec via Docker socket</text>
+
+  <!-- CloudWatch Agent -->
+  <rect x="345" y="431" width="305" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="498" y="452" text-anchor="middle" font-size="12" font-weight="bold" fill="white">CloudWatch Agent</text>
+  <text x="498" y="468" text-anchor="middle" font-size="11" fill="#D0E8FF">CPU · memory · disk · latency</text>
+  <text x="498" y="483" text-anchor="middle" font-size="11" fill="#A8D4FF">Custom metric namespace</text>
+
+  <!-- IAM Role note -->
+  <rect x="50" y="509" width="600" height="38" rx="6" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="350" y="524" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a5080">IAM Instance Profile</text>
+  <text x="350" y="539" text-anchor="middle" font-size="11" fill="#444">Allows: secretsmanager:GetSecretValue · s3:PutObject/GetObject · cloudwatch:PutMetricData · ssm:GetParameter</text>
+
+  <!-- ===== RDS ===== -->
+  <rect x="30" y="660" width="380" height="90" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="220" y="685" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Amazon RDS PostgreSQL</text>
+  <text x="220" y="703" text-anchor="middle" font-size="11" fill="white">db.t3.medium · Multi-AZ (primary + standby)</text>
+  <text x="220" y="719" text-anchor="middle" font-size="11" fill="white">pgvector extension · lobechat + casdoor DBs</text>
+  <text x="220" y="735" text-anchor="middle" font-size="10" fill="#FFF3CC">Managed AWS · automated backups · eu-west-1</text>
+
+  <!-- App EC2 → RDS arrow -->
+  <line x1="220" y1="620" x2="220" y2="658" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-b)"/>
+  <text x="228" y="643" font-size="10" fill="#2C6FAD">:5432</text>
+
+  <!-- ===== S3 (replacing MinIO) ===== -->
+  <rect x="460" y="660" width="250" height="90" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="585" y="685" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Amazon S3</text>
+  <text x="585" y="703" text-anchor="middle" font-size="11" fill="white">Replaces MinIO</text>
+  <text x="585" y="719" text-anchor="middle" font-size="11" fill="white">lobe-files bucket · public-read ACL</text>
+  <text x="585" y="735" text-anchor="middle" font-size="10" fill="#FFF3CC">SigV4 · versioning · 11x9s durability</text>
+
+  <!-- App EC2 → S3 arrow -->
+  <line x1="500" y1="620" x2="545" y2="658" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-b)"/>
+  <text x="508" y="643" font-size="10" fill="#2C6FAD">HTTPS</text>
+
+  <!-- ===== QDRANT ZONE ===== -->
+  <!-- Primary Qdrant EC2 -->
+  <rect x="750" y="180" width="350" height="280" rx="12" fill="#DDEEFF" stroke="#4A90D9" stroke-width="3"/>
+  <text x="925" y="204" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5080">Qdrant Primary EC2</text>
+  <text x="925" y="220" text-anchor="middle" font-size="11" fill="#2C6FAD">r6i.large · eu-west-1a · 100 GB gp3</text>
+
+  <!-- Qdrant service -->
+  <rect x="775" y="232" width="300" height="70" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="2"/>
+  <text x="925" y="256" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Qdrant</text>
+  <text x="925" y="272" text-anchor="middle" font-size="11" fill="#D0E8FF">qdrant/qdrant:latest</text>
+  <text x="925" y="288" text-anchor="middle" font-size="11" fill="#A8D4FF">:47010 REST · :47011 gRPC</text>
+
+  <!-- EBS volume -->
+  <rect x="775" y="316" width="300" height="42" rx="6" fill="white" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="925" y="334" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a5080">100 GB gp3 EBS</text>
+  <text x="925" y="350" text-anchor="middle" font-size="11" fill="#444">qdrant/storage/ bind mount</text>
+
+  <!-- EBS snapshot → S3 every 6h -->
+  <line x1="1075" y1="337" x2="1130" y2="337" stroke="#CC7000" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o)"/>
+  <text x="1082" y="330" font-size="10" fill="#CC7000" font-weight="bold">Every 6h</text>
+  <text x="1082" y="345" font-size="10" fill="#CC7000">snapshot</text>
+
+  <!-- App EC2 → Qdrant arrow -->
+  <line x1="672" y1="380" x2="748" y2="300" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-b)"/>
+  <text x="695" y="345" font-size="10" fill="#2C6FAD">:47010</text>
+
+  <!-- Warm standby label -->
+  <rect x="775" y="375" width="300" height="58" rx="6" fill="#4A90D9" stroke="#2C6FAD" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="925" y="397" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Warm Standby</text>
+  <text x="925" y="413" text-anchor="middle" font-size="11" fill="#D0E8FF">r6i.large · eu-west-1b</text>
+  <text x="925" y="429" text-anchor="middle" font-size="11" fill="#A8D4FF">restores from latest snapshot</text>
+
+  <!-- Primary → Standby arrow -->
+  <line x1="925" y1="426" x2="925" y2="442" stroke="#2C6FAD" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-b)"/>
+
+  <!-- Snapshot bucket -->
+  <rect x="1130" y="300" width="230" height="75" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="1245" y="323" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Amazon S3</text>
+  <text x="1245" y="340" text-anchor="middle" font-size="11" fill="white">EBS Snapshots</text>
+  <text x="1245" y="357" text-anchor="middle" font-size="11" fill="white">qdrant-snapshots bucket</text>
+  <text x="1245" y="370" text-anchor="middle" font-size="10" fill="#FFF3CC">eu-west-1 · lifecycle 30d</text>
+
+  <!-- ===== CLOUDWATCH ===== -->
+  <rect x="750" y="490" width="610" height="130" rx="8" fill="#FF9500" stroke="#CC7000" stroke-width="2"/>
+  <text x="1055" y="515" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Amazon CloudWatch</text>
+  <text x="1055" y="533" text-anchor="middle" font-size="11" fill="white">Custom dashboards · Metric alarms · Log Groups</text>
+
+  <!-- Alarms list -->
+  <rect x="770" y="545" width="270" height="60" rx="4" fill="rgba(0,0,0,0.15)"/>
+  <text x="905" y="562" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Alarms</text>
+  <text x="905" y="577" text-anchor="middle" font-size="10" fill="white">CPU &gt; 80% · Memory &gt; 85%</text>
+  <text x="905" y="591" text-anchor="middle" font-size="10" fill="white">Qdrant disk &gt; 80% · 5xx rate &gt; 1%</text>
+  <text x="905" y="605" text-anchor="middle" font-size="10" fill="#FFF3CC">→ SNS → email notification</text>
+
+  <rect x="1060" y="545" width="270" height="60" rx="4" fill="rgba(0,0,0,0.15)"/>
+  <text x="1195" y="562" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Log Groups</text>
+  <text x="1195" y="577" text-anchor="middle" font-size="10" fill="white">/lobechat/lobe-chat</text>
+  <text x="1195" y="591" text-anchor="middle" font-size="10" fill="white">/lobechat/casdoor</text>
+  <text x="1195" y="605" text-anchor="middle" font-size="10" fill="#FFF3CC">30-day retention</text>
+
+  <!-- CloudWatch Agent → CloudWatch arrow -->
+  <line x1="648" y1="460" x2="750" y2="520" stroke="#CC7000" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-o)"/>
+  <!-- Qdrant CW agent -->
+  <line x1="925" y1="460" x2="925" y2="488" stroke="#CC7000" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-o)"/>
+
+  <!-- Secrets Manager → App EC2 -->
+  <line x1="1100" y1="85" x2="672" y2="440" stroke="#CC7000" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-o)"/>
+  <text x="890" y="260" font-size="10" fill="#CC7000">secret fetch at boot</text>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="30" y="790" width="1340" height="170" rx="8" fill="white" stroke="#CCC" stroke-width="1"/>
+  <text x="55" y="812" font-size="12" font-weight="bold" fill="#333">Legend</text>
+  <rect x="110" y="800" width="16" height="16" rx="3" fill="#4A90D9"/>
+  <text x="132" y="813" font-size="12" fill="#333">EC2 / Docker services</text>
+  <rect x="300" y="800" width="16" height="16" rx="3" fill="#FF9500"/>
+  <text x="322" y="813" font-size="12" fill="#333">Managed AWS services</text>
+  <rect x="500" y="800" width="16" height="16" rx="3" fill="#999"/>
+  <text x="522" y="813" font-size="12" fill="#333">External</text>
+  <line x1="600" y1="808" x2="640" y2="808" stroke="#2C6FAD" stroke-width="2" marker-end="url(#arr-b)"/>
+  <text x="646" y="813" font-size="12" fill="#333">Service data flow</text>
+  <line x1="790" y1="808" x2="830" y2="808" stroke="#CC7000" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o)"/>
+  <text x="836" y="813" font-size="12" fill="#333">Backup / metrics / secrets</text>
+
+  <line x1="30" y1="825" x2="1370" y2="825" stroke="#EEE" stroke-width="1"/>
+  <text x="55" y="842" font-size="11" fill="#555">• Route53 resolves domain → ALB public DNS. ACM issues TLS cert — no Caddy TLS needed. ALB forwards :443 → App EC2 :47000.</text>
+  <text x="55" y="858" font-size="11" fill="#555">• RDS PostgreSQL Multi-AZ replaces the Postgres container — automated failover &lt;60s, automated backups, point-in-time recovery.</text>
+  <text x="55" y="874" font-size="11" fill="#555">• Amazon S3 replaces MinIO — 11x9s durability, no self-managed storage. SigV4 signatures work natively (no proxy prefix issues).</text>
+  <text x="55" y="890" font-size="11" fill="#555">• Qdrant stays on EC2 (spec requirement) — r6i.large for memory-optimised vector workloads. EBS snapshots every 6h to S3. Warm standby in eu-west-1b.</text>
+  <text x="55" y="906" font-size="11" fill="#555">• Secrets Manager holds all secrets. EC2 IAM role grants read access. No secrets in git, no secrets in userdata.sh plain text.</text>
+  <text x="55" y="922" font-size="11" fill="#555">• CloudWatch: custom metrics from agent, alarms on CPU/memory/disk/error-rate → SNS → email. Log groups with 30-day retention.</text>
+  <text x="55" y="938" font-size="11" fill="#CC6600">• Managed services used in prod: ALB, ACM, RDS, S3, CloudWatch, Secrets Manager, Route53 = 7 managed services (spec requires ≥ 4).</text>
+</svg>
