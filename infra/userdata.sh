@@ -1,27 +1,37 @@
 #!/usr/bin/env bash
 # EC2 user-data bootstrap script for LobeChat.
-# Runs as root on first boot. Replace every CHANGE_ME before deploying.
+# Runs as root on first boot.
+# Prerequisites: EC2 instance must have an IAM instance profile that allows
+#   ssm:GetParameter on /lobechat/* (e.g. lobechat-ec2-role with
+#   AmazonSSMReadOnlyAccess).  Store all secrets with:
+#     aws ssm put-parameter --name /lobechat/<key> --value <val> \
+#       --type SecureString --region eu-west-1
 # Progress is logged to /var/log/cloud-init-output.log (default).
 
 set -euo pipefail
 
+REGION="eu-west-1"
+
 # ---------------------------------------------------------------------------
-# Secrets — REPLACE BEFORE DEPLOYING
+# Secrets — pulled from SSM Parameter Store at boot (no plaintext in git).
 # ---------------------------------------------------------------------------
-DUCKDNS_TOKEN="84312cb0-aa15-4be4-b0f0-c8672b90c674"
-KEY_VAULTS_SECRET="2VoGUkROiIMsGQiOQfBwktyUuUZDO+lFSJuBiUtnT8M="        # min 32 chars
-NEXT_AUTH_SECRET="lwU6w5Ce0YGHNcUYrhTCFSB+tfrC9MADuR2Xpulbsoc="         # min 32 chars
-POSTGRES_PASSWORD="cUJ81n4QNXyhaQF9fE1lHw=="
-MINIO_ROOT_USER="minioadmin"
-MINIO_ROOT_PASSWORD="EtNhiYnt0NzupeA1rV4uCQ=="
-MCPHUB_ADMIN_USER="admin"
-MCPHUB_ADMIN_PASSWORD="mKk8FeeLBzzlmv0+PXv5HQ=="
-AUTH_CASDOOR_ID="a387a4892ee19b1a2249"
-AUTH_CASDOOR_SECRET="dbf205949d704de81b0b5b3603174e23fbecc354"
-OPENROUTER_API_KEY="not-used"
-DEEPSEEK_API_KEY="sk-82572e2fac79473984470098f67c2412"
-HF_TOKEN="not-used"
-OPENAPI_MCP_HEADERS='{"Authorization":"Bearer CHANGE_ME","Notion-Version":"2022-06-28"}'
+ssm() { aws ssm get-parameter --name "/lobechat/$1" --with-decryption \
+          --query Parameter.Value --output text --region "$REGION"; }
+
+DUCKDNS_TOKEN=$(ssm duckdns-token)
+KEY_VAULTS_SECRET=$(ssm key-vaults-secret)
+NEXT_AUTH_SECRET=$(ssm next-auth-secret)
+POSTGRES_PASSWORD=$(ssm postgres-password)
+MINIO_ROOT_USER=$(ssm minio-root-user)
+MINIO_ROOT_PASSWORD=$(ssm minio-root-password)
+MCPHUB_ADMIN_USER=$(ssm mcphub-admin-user)
+MCPHUB_ADMIN_PASSWORD=$(ssm mcphub-admin-password)
+AUTH_CASDOOR_ID=$(ssm auth-casdoor-id)
+AUTH_CASDOOR_SECRET=$(ssm auth-casdoor-secret)
+OPENROUTER_API_KEY=$(ssm openrouter-api-key)
+DEEPSEEK_API_KEY=$(ssm deepseek-api-key)
+HF_TOKEN=$(ssm hf-token)
+OPENAPI_MCP_HEADERS=$(ssm openapi-mcp-headers)
 # ---------------------------------------------------------------------------
 
 DOMAIN="lucasescayola-lobechat.duckdns.org"
