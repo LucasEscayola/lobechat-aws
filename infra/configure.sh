@@ -44,6 +44,8 @@ set_env AUTH_CASDOOR_SECRET  "${CASDOOR_CLIENT_SECRET}"
 set_env AUTH_TRUST_HOST      "true"
 set_env APP_URL               "https://${DOMAIN}"
 set_env NEXTAUTH_URL          "https://${DOMAIN}"
+set_env S3_ENDPOINT           "https://lucasescayola-minio.duckdns.org"
+set_env S3_PUBLIC_DOMAIN      "https://lucasescayola-minio.duckdns.org"
 echo "      Done."
 
 # ---------------------------------------------------------------------------

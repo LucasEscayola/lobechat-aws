@@ -1,3 +1,22 @@
+# MinIO S3 — own vhost so SigV4 request signatures are not broken by
+# path-prefix rewriting. LobeChat signs requests for this exact hostname.
+lucasescayola-minio.duckdns.org {
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+
+	reverse_proxy localhost:47005 {
+		flush_interval -1
+
+		header_up Host              {host}
+		header_up X-Real-IP         {remote_host}
+		header_up X-Forwarded-For   {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}
+
 lucasescayola-lobechat.duckdns.org {
 	# Force HTTP-01 challenge (port 80 must be reachable from the internet).
 	# Caddy will obtain and auto-renew the Let's Encrypt certificate.
