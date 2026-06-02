@@ -1,3 +1,23 @@
+## v0.7.0 (2026-06-02)
+
+### Feat
+
+- add MinIO subdomain vhost and wire S3_ENDPOINT/S3_PUBLIC_DOMAIN
+
+### Fix
+
+- replace hardcoded secrets with SSM Parameter Store pulls
+- set MINIO_API_CORS_ALLOW_ORIGIN from APP_URL so HTTPS LobeChat can upload
+- remove broken route.js patch mount — patch was built for older LobeChat, breaks MCP on v1.143.3
+- revert to port-47002 Casdoor approach — subpath incompatible with v2.13.0 SPA routing
+- route /static/* and Referer-based /api/* to Casdoor for login page assets
+- patch originFrontend in casdoor-app.conf so authorization_endpoint includes /casdoor prefix
+- use force-recreate instead of restart to apply new compose config
+- correct Casdoor OAuth credentials and init_data URLs
+- correct Casdoor OAuth credentials and init_data URLs
+- remove non-existent origin column from Casdoor DB update
+- Casdoor SSO - add /casdoor subpath routing and configure script
+
 ## v0.6.0 (2026-05-04)
 
 ### Feat
