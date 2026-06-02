@@ -7,8 +7,8 @@
 | Student name | Lucas Escayola Royuela |
 | ESADE email | lucas.escayola@alumni.esade.edu |
 | GitHub repo URL | https://github.com/LucasEscayola/lobechat-aws (private; user `joseporiolrius` invited as collaborator) |
-| Latest commit SHA | 5c6e71bf3113adea9f6684329c2d81cb2eda10aa |
-| Final tag | TODO (`cz bump` → tag as `final-vX.Y.Z`) |
+| Latest commit SHA | 16a3c4e9cbc6f9bde13930e1a0cdd0b471c852be |
+| Final tag | v0.7.0 |
 
 ## 2. Public URL
 
