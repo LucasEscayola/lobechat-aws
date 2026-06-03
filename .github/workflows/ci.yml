@@ -1,0 +1,118 @@
+name: CI — Static Analysis
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # Full history needed: gitleaks scans git log, cz check --rev-range walks commits.
+      # Default shallow clone (fetch-depth: 1) makes both gates fail or scan nothing.
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── Hadolint — Dockerfile linting ─────────────────────────────────────
+      - name: Install hadolint
+        run: |
+          curl -fsSL -o /usr/local/bin/hadolint \
+            https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+          chmod +x /usr/local/bin/hadolint
+
+      - name: hadolint — dockerfiles/mcphub.Dockerfile
+        run: hadolint dockerfiles/mcphub.Dockerfile
+        continue-on-error: true   # warn-only: FROM :latest and USER root will surface as findings
+
+      - name: hadolint — dockerfiles/sandbox.Dockerfile
+        run: hadolint dockerfiles/sandbox.Dockerfile
+        continue-on-error: true   # warn-only: unpinned curl-install URLs and sudo will surface as findings
+
+      # ── docker compose config — schema + interpolation only, never up/build ─
+      - name: Prepare dummy .env for compose validation
+        run: |
+          cp .env.example .env
+          echo "OPENAPI_MCP_HEADERS={}" >> .env
+        # Safe: .env.example contains only placeholder values (e.g. AUTH_CASDOOR_ID=your-casdoor-app-id).
+        # .gitignore already excludes .env from git, so this copy is never committed.
+
+      - name: docker compose config — validate schema and interpolation
+        run: docker compose -f docker-compose.yml config -q
+        # Validates YAML schema and resolves ${VAR} references — never starts or builds containers.
+
+      # ── yamllint — YAML linting ────────────────────────────────────────────
+      - name: Install yamllint
+        run: pip install --quiet yamllint
+
+      - name: yamllint — docker-compose.yml and ci.yml
+        run: |
+          yamllint \
+            -d "{extends: relaxed, rules: {line-length: {max: 200}}}" \
+            docker-compose.yml .github/workflows/ci.yml
+        continue-on-error: true   # warn-only: surfaces style findings without failing the run
+
+      # ── actionlint — GitHub Actions workflow linting ───────────────────────
+      - name: Install actionlint
+        run: |
+          ACTIONLINT_VERSION=1.7.7
+          curl -fsSL -o /tmp/actionlint.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          tar -xzf /tmp/actionlint.tar.gz -C /usr/local/bin actionlint
+
+      - name: actionlint — .github/workflows/ci.yml
+        run: actionlint .github/workflows/ci.yml
+        continue-on-error: true   # warn-only
+
+      # ── gitleaks — secret scanning ─────────────────────────────────────────
+      - name: Install gitleaks
+        run: |
+          GITLEAKS_VERSION=8.21.2
+          curl -fsSL -o /tmp/gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf /tmp/gitleaks.tar.gz -C /usr/local/bin gitleaks
+
+      - name: gitleaks — scan working tree and git history
+        run: gitleaks detect --source=. --log-level=warn
+        continue-on-error: true   # warn-only: .env is gitignored; placeholder patterns in .env.example may trip rules
+
+      # ── trivy — vulnerability + misconfiguration scanning ─────────────────
+      - name: Install trivy
+        run: |
+          TRIVY_VERSION=0.57.1
+          curl -fsSL -o /tmp/trivy.tar.gz \
+            "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy
+
+      - name: trivy fs — dependency and vulnerability scan
+        run: trivy fs --exit-code 0 --severity HIGH,CRITICAL .
+        continue-on-error: true   # warn-only: surfaces CVEs in Python deps without failing the run
+
+      - name: trivy config — Dockerfile and Compose misconfiguration scan
+        run: trivy config --exit-code 0 .
+        continue-on-error: true   # warn-only: surfaces USER root, :latest images, sslmode=disable without failing
+
+      # ── Commitizen — Conventional Commits check ───────────────────────────
+      # Mirrors the local gate .githooks/commit-msg, which uses --commit-msg-file —
+      # a flag that does not exist in CI. Here we use --rev-range to lint only the
+      # new commits on this branch, not the entire history (which contains
+      # pre-conventional commits that would cause false failures).
+      - name: Install uv
+        run: pip install --quiet uv
+
+      - name: uv sync — install commitizen
+        run: uv sync --group dev
+
+      - name: cz check — Conventional Commits (new commits only)
+        run: uv run cz check --rev-range origin/main..HEAD
+
+      # NOTE: pytest and the tests/ directory are deliberately excluded.
+      # tests/ contains live-stack integration tests: test_vllm.py imports openai
+      # and httpx and hits a running vLLM endpoint at http://localhost:47007/v1;
+      # test_mcp_ssh.py connects to a live SSH server via httpx + mcp[cli].
+      # These tests require a running 11-service stack and cannot execute in a
+      # build-free CI where no containers are started.
