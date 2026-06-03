@@ -2,11 +2,10 @@
 
 ## Evidence
 
-<!-- Screenshot to be committed after first workflow run -->
 ![GitHub Actions run](docs/evidence/ci/actions-run.png)
 
-**Actions run URL:** _to be recorded after first push_
-**Commit SHA the run executed against:** _to be recorded after first push_
+**Actions run URL:** https://github.com/LucasEscayola/lobechat-aws/actions/runs/26870263463
+**Commit SHA the run executed against:** `4c71bb7`
 
 ---
 
